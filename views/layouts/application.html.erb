@@ -11,21 +11,62 @@
 
     <%= yield :head %>
 
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
+  <body class="light-theme">
        <p class="notice"><%= notice %></p>
        <p class="alert"><%= alert %></p>
     <%= yield %>
+
+    <script>
+      // Theme Toggle Functionality
+      document.addEventListener('DOMContentLoaded', function() {
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+
+        // Check for saved theme preference or default to light mode
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        body.classList.add(currentTheme + '-theme');
+
+        // Update toggle visual state based on current theme
+        function updateToggleVisual() {
+          const toggleThumb = document.querySelector('.toggle-thumb');
+          if (body.classList.contains('dark-theme')) {
+            toggleThumb.style.left = '32px';
+            toggleThumb.style.backgroundColor = 'var(--linkedin-blue)';
+          } else {
+            toggleThumb.style.left = '2px';
+            toggleThumb.style.backgroundColor = 'white';
+          }
+        }
+
+        // Toggle theme function
+        function toggleTheme() {
+          if (body.classList.contains('light-theme')) {
+            body.classList.remove('light-theme');
+            body.classList.add('dark-theme');
+            localStorage.setItem('theme', 'dark');
+          } else {
+            body.classList.remove('dark-theme');
+            body.classList.add('light-theme');
+            localStorage.setItem('theme', 'light');
+          }
+          updateToggleVisual();
+        }
+
+
+        if (themeToggle) {
+          themeToggle.addEventListener('click', toggleTheme);
+
+          updateToggleVisual();
+        }
+      });
+    </script>
   </body>
 </html>
